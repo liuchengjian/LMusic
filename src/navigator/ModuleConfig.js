@@ -1,5 +1,5 @@
 import {LoginPage} from "../pages/LoginPage";
-import {MainPage} from "../pages/MianPage";
+import MainPage from "../pages/MianPage";
 
 export const appModule = () => [
   {

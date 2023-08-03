@@ -47,7 +47,7 @@ Service.interceptors.request.use(function (config) {
     "请求参数：" + JSON.stringify(config?.params || config?.data)
   );
   Object.assign(config.headers, {cookie: global.token});
-  console.log('请求头headers：' + JSON.stringify(config.headers));
+  // console.log('请求头headers：' + JSON.stringify(config.headers));
   if (!config.notCheckToken && !Const.token) {
     removePending(config.url, "token失效，请重新登录");
     //无token跳转到登录界面

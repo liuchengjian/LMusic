@@ -24,7 +24,6 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import {findList, toLogin} from "./src/config/Http";
-import {Const} from "./src/config/Const";
 import {appModule} from "./src/navigator/ModuleConfig";
 import {NavContainer} from "./src/navigator/BaseNavigator";
 
