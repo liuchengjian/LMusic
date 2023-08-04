@@ -33,7 +33,6 @@ export const TopicView = (props) => {
             actid: item?.resourceId
         })
         setUrl(res?.sharePicUrl)
-        console.log('sharePicUrl', JSON.stringify(res?.sharePicUrl))
     }
     return (<View
         style={{

@@ -33,9 +33,9 @@ export const toLogin = (params) => {
 export const findList = (params) => {
   return Service(
     setConfig({
-      url: '/homepage/block/page',
+      url: '/homepage/block/page?timestamp=' + new Date().getTime(),
       method: 'get',
-      params:params,
+      params: params,
       notCheckToken: true
     }),
   );
@@ -45,7 +45,7 @@ export const findBall = (params) => {
     setConfig({
       url: '/homepage/dragon/ball',
       method: 'get',
-      params:params,
+      params: params,
       notCheckToken: true
     }),
   );
@@ -55,7 +55,7 @@ export const hotTopic = (params) => {
     setConfig({
       url: '/hot/topic',
       method: 'get',
-      params:params,
+      params: params,
       notCheckToken: true
     }),
   );
@@ -65,9 +65,9 @@ export const topicDetail = (params) => {
     setConfig({
       url: '/topic/detail',
       method: 'get',
-      params:params,
+      params: params,
       notCheckToken: true,
-        removePending: false
+      removePending: false
     }),
   );
 };

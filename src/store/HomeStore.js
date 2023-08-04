@@ -4,64 +4,49 @@ import {findBall, findList} from "../config/Http";
 import {Const} from "../config/Const";
 
 export default class HomeStore {
-  @observable cursor = "";
+  cursor = "";
   @observable refreshing = false;
   @observable hasMore = true;
   @observable homeList = [];
-  @observable total = 0;
-  @observable canLoadMore = true;
+
   @action
-  resetHome = () => {
+  resetList = () => {
     this.cursor = "";
-  }
-  @action
-  setCanLoadMore = (canLoadMore) => {
-    this.canLoadMore = canLoadMore;
-  }
-
-
-  resetHomeListData=()=>{
-    this.resetHome();
-    this.homeListData();
+    this.hasMore = true;
   }
   homeListData = async () => {
     if (this.refreshing) {
       return
     }
+    if (!this.hasMore) {
+      return
+    }
+    let ball
     try {
-      this.refreshing = true
-      const ball = await findBall(
-        {
-          timestamp: new Date().getTime(),
-          cookie: Const.token
-        });
-      const res = await findList(
-        {
-          timestamp: new Date().getTime(),
-          cookie: Const.token,
-          // offset: 30,
-          cursor: this.cursor
-        })
-      let newData = res.blocks;
       if (!this.cursor) {
-        newData.splice(1, 0, {blockCode: 'header_top', data: ball})
+        //下拉刷新
+        this.refreshing = true
+        ball = await findBall({timestamp: new Date().getTime(), cookie: Const.token});
+      }
+      const res = await findList({cookie: Const.token, cursor: this.cursor})
+      let newData = res.blocks;
+      if (!this.cursor && ball) {
+        newData.splice(1, 0, {blockCode: 'HEADER_TOP', data: ball})
       }
       if (!this.cursor) {
         this.homeList = newData
       } else {
         this.homeList = [...this.homeList, ...newData];
       }
-      this.cursor = res?.cursor
-      this.hasMore = res?.hasMore
-      if (res.hasMore) {
-        this.total = this.homeList.length + 6
-      } else {
-        this.total = this.homeList.length
+      if (res?.cursor) {
+        this.cursor = res?.cursor
       }
-    } catch (e) {
+      this.hasMore = res?.hasMore
+    }catch (e) {
 
-    } finally {
+    }finally {
       this.refreshing = false
     }
+
   }
 }
