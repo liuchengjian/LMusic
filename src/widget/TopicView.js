@@ -36,10 +36,13 @@ export const TopicView = (props) => {
     }
     return (<View
         style={{
-            margin: 5, alignItems: 'center',
+            margin: 5,
             flexDirection: 'row',
+            justifyContent:'space-between',
+            paddingHorizontal:10,
             height: 120, width: viewportWidth * 2 / 3,
-            backgroundColor: item?.uiElement?.rcmdShowType,
+            backgroundColor: '#f00',
+            borderRadius:8,
         }}
     >
         <View>
@@ -50,6 +53,10 @@ export const TopicView = (props) => {
                 {item?.uiElement?.subTitle?.title}
             </Text>
         </View>
-        {Boolean(url) && <Image source={{uri: url}} style={{width: 60, height: 60,borderRadius:5}}/>}
+        {Boolean(url) && <Image source={{uri: url}} style={{
+            marginTop:45,
+            width: 60,
+            height: 60,
+            borderRadius:5}}/>}
     </View>)
 }
