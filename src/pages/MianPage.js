@@ -20,6 +20,8 @@ import {TopicView} from "../widget/TopicView";
 import HomeStore from "../store/HomeStore";
 import {observer, useLocalStore} from "mobx-react";
 import {LFlatList} from "../component/LFlatList";
+import Touchable from "../component/Touchable";
+import {deleteAll, queryMusic, saveMusic} from "../realm/realm";
 
 const MainPage = () => {
   const store = useLocalStore(() => new HomeStore());
@@ -56,20 +58,32 @@ const MainPage = () => {
     return view
   }
   const renderResource = (resource, i, size) => {
-    return (<View key={i}
-                  style={{
-                    margin: 5, alignItems: 'center',
-                    marginLeft: i === 0 ? 15 : 5,
-                    marginRight: i === size - 1 ? 15 : 5,
-                    justifyContent: 'center',
-                  }}
+    return (<Touchable
+      onPress={() => {
+        console.log( resource?.resourceId)
+        saveMusic('Music', {
+          id: resource?.resourceId+"",
+          title:resource?.uiElement?.mainTitle?.title,
+          thumbnailUrl: resource?.uiElement?.image?.imageUrl,
+        })
+        const res = queryMusic("Music")
+        // deleteAll("Music")
+        console.log(res)
+      }}
+      key={i}
+      style={{
+        margin: 5, alignItems: 'center',
+        marginLeft: i === 0 ? 15 : 5,
+        marginRight: i === size - 1 ? 15 : 5,
+        justifyContent: 'center',
+      }}
     >
       <Image source={{uri: resource?.uiElement?.image?.imageUrl}}
              style={{height: 120, flex: 1, width: 120, borderRadius: 5}}/>
       <Text numberOfLines={2} style={{marginTop: 5, height: 44, maxWidth: 120}}>
         {resource?.uiElement?.mainTitle?.title}
       </Text>
-    </View>)
+    </Touchable>)
   }
   const renderHotView = (creatives) => {
     let data = [];

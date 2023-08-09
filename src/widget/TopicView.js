@@ -23,7 +23,7 @@ import {hp, viewportWidth} from "../utils/utils";
 
 export const TopicView = (props) => {
     const {item} = props
-    const [url, setUrl] = useState("");
+    const [data, setData] = useState({});
     useEffect(() => {
         detail();
     }, [item?.resourceId]);
@@ -32,7 +32,8 @@ export const TopicView = (props) => {
             cookie: Const.token,
             actid: item?.resourceId
         })
-        setUrl(res?.sharePicUrl)
+        // setUrl(res?.sharePicUrl)
+        setData(res)
     }
     return (<View
         style={{
@@ -41,10 +42,11 @@ export const TopicView = (props) => {
             justifyContent:'space-between',
             paddingHorizontal:10,
             height: 120, width: viewportWidth * 2 / 3,
-            backgroundColor: '#f00',
+            backgroundColor: data.coverMobileUrl,
             borderRadius:8,
         }}
     >
+
         <View>
             <Text numberOfLines={1} style={{marginTop: 5, maxWidth: 120}}>
                 {item?.uiElement?.mainTitle?.title}
@@ -53,7 +55,7 @@ export const TopicView = (props) => {
                 {item?.uiElement?.subTitle?.title}
             </Text>
         </View>
-        {Boolean(url) && <Image source={{uri: url}} style={{
+        {Boolean(data.sharePicUrl) && <Image source={{uri: data.sharePicUrl}} style={{
             marginTop:45,
             width: 60,
             height: 60,

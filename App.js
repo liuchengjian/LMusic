@@ -38,7 +38,7 @@ const App: () => React$Node = () => {
     return result;
   }
   return (
-    <NavContainer moduleData={data} initialRouteName={"SoundView"} />
+    <NavContainer moduleData={data} initialRouteName={"login"} />
   );
 };
 
