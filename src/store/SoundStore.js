@@ -1,6 +1,9 @@
 import React from 'react';
 import {action, observable} from "mobx";
 import {getCurrentTime, getDuration, init, isPlaying, pause, play, setCurrentTime} from "../component/sound";
+import {queryRealm, saveRealm} from "../realm/realm";
+import {findBall, songUrl} from "../config/Http";
+import {Const} from "../config/Const";
 
 export default class SoundStore {
   @observable url = ""
@@ -8,6 +11,7 @@ export default class SoundStore {
   @observable duration = 0;
   @observable currentTime = 0;
   @observable isPlaying = false;
+  @observable musicList = [];
   @action
   initUrl = (url) => {
     // this.isPlaying = url
@@ -37,7 +41,7 @@ export default class SoundStore {
   playMusic = () => {
     const res = play()
     this.playState = 'playing'
-    console.log('isPlaying', this.isPlaying)
+    console.log('isPlaying', this.playState)
 
   }
   /**
@@ -51,7 +55,7 @@ export default class SoundStore {
   }
 
   playOrPauseMusic = (onlyPlay) => {
-    if (!onlyPlay && this.playState === 'playing') {
+    if (!onlyPlay &&this.playState === 'playing') {
       this.pauseMusic();
     } else {
       this.playMusic();
@@ -94,6 +98,30 @@ export default class SoundStore {
 
   isMusicPlaying = () => {
     const res = isPlaying()
+  }
+
+  musicUrl = async (id, title, thumbnailUrl) => {
+    let res = await songUrl({id, cookie: Const.token});
+    if (res?.length) {
+      this.addMusicList({
+        id: res[0].id + "",
+        title: title,
+        thumbnailUrl: thumbnailUrl,
+        url: res[0].url || '',
+        duration: res[0].size,
+        rate: new Date().getTime()
+      })
+    }
+  }
+
+  addMusicList = (data) => {
+    saveRealm('Music', data)
+    this.queryMusicList()
+  }
+
+  queryMusicList = () => {
+    const data = queryRealm("Music").sorted('rate', true);
+    this.musicList = data;
   }
 
 

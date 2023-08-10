@@ -12,19 +12,20 @@ import {
   FlatList
 } from 'react-native';
 
-import {Const} from "../config/Const";
 import AndroidBackPress from "../navigator/AndroidBackPress";
-import {findBall, findList, hotTopic} from "../config/Http";
 import {Carousels, imageHeight} from "../widget/Carousel";
 import {TopicView} from "../widget/TopicView";
 import HomeStore from "../store/HomeStore";
 import {observer, useLocalStore} from "mobx-react";
 import {LFlatList} from "../component/LFlatList";
 import Touchable from "../component/Touchable";
-import {deleteAll, queryMusic, saveMusic} from "../realm/realm";
+import {deleteAll, queryRealm, saveRealm} from "../realm/realm";
+import SoundStore from "../store/SoundStore";
+import BottomMusicControl from "../widget/BottomMusicControl";
 
 const MainPage = () => {
   const store = useLocalStore(() => new HomeStore());
+  const soundStore = useLocalStore(() => new SoundStore());
 
   useEffect(() => {
     const androidBack = new AndroidBackPress();
@@ -60,15 +61,24 @@ const MainPage = () => {
   const renderResource = (resource, i, size) => {
     return (<Touchable
       onPress={() => {
-        console.log( resource?.resourceId)
-        saveMusic('Music', {
-          id: resource?.resourceId+"",
-          title:resource?.uiElement?.mainTitle?.title,
-          thumbnailUrl: resource?.uiElement?.image?.imageUrl,
-        })
-        const res = queryMusic("Music")
-        // deleteAll("Music")
-        console.log(res)
+
+        if (!resource?.logInfo) {
+          return
+        }
+        let logInfo = JSON.parse(resource?.logInfo)
+        if(!logInfo?.relatedSong){
+          return;
+        }
+        console.log(logInfo?.relatedSong)
+        soundStore.musicUrl(logInfo?.relatedSong,
+          resource?.uiElement?.mainTitle?.title,
+          resource?.uiElement?.image?.imageUrl)
+
+        const res = queryRealm("Music")
+        if (i == 1) {
+          deleteAll("Music")
+        }
+        // console.log(res)
       }}
       key={i}
       style={{
@@ -123,6 +133,7 @@ const MainPage = () => {
           </ScrollView>)
         break;
       case 'HOMEPAGE_BLOCK_PLAYLIST_RCMD':
+      case 'HOMEPAGE_BLOCK_MGC_PLAYLIST':
         // console.log(JSON.stringify(item))
         return <View>
           <View
@@ -164,14 +175,14 @@ const MainPage = () => {
         break;
       default:
         // console.log(JSON.stringify(item.blockCode),item.uiElement?.subTitle?.title)
-        return (<Text style={{fontFamily: 'bold', flex: 1}}>
+        return (<Text style={{fontFamily: 'bold', height: 100, flex: 1}}>
           {item.uiElement?.subTitle?.title}
         </Text>)
     }
 
   }
   return (
-    <View style={{flex: 1, backgroundColor: "#fff"}}>
+    <View style={{flex: 1, backgroundColor: "#f5f5f5"}}>
       <StatusBar barStyle="dark-content"/>
       <LFlatList
         data={store.homeList}
@@ -189,6 +200,7 @@ const MainPage = () => {
           store.homeListData();
         }}
       />
+      <BottomMusicControl store={soundStore}/>
     </View>
   );
 }

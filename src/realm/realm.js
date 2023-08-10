@@ -1,5 +1,5 @@
 import Realm from 'realm';
-
+//数据库实体
 export const Music = {
   name: 'Music',
   primaryKey: 'id',
@@ -7,15 +7,19 @@ export const Music = {
     id: 'string',
     title: 'string',
     thumbnailUrl: 'string',
+    url: 'string',
     currentTime: {type: 'double', default: 0},
     duration: {type: 'double', default: 0},
     rate: {type: 'double', default: 0},
   },
 };
-
+/**
+ * realm 版本迁移
+ * @type {Realm}
+ */
 const realm = new Realm({
   schema: [Music],
-  schemaVersion: 1,
+  schemaVersion: 2,
   migration: (oldRealm, newRealm) => {
     if (oldRealm.schemaVersion < 1) {
       const oldObjects = oldRealm.objects('Music');
@@ -30,21 +34,32 @@ const realm = new Realm({
   },
 });
 
-export function saveMusic(type, data: Partial) {
+/**
+ * 保存数据
+ * @param type
+ * @param data
+ */
+export function saveRealm(type, data: Partial) {
   try {
-    realm.write(() => {
+    realm?.write(() => {
       realm.create(type, data, true);
       console.log('保存成功');
     });
   } catch (error) {
     console.log('保存失败:' + error);
   }
+
 }
 
-export function deleteMusic(data) {
+/**
+ * 删除一个
+ * @param data
+ * @returns {Promise<void>}
+ */
+export function deleteRealm(data) {
   return Promise.resolve(() => {
     try {
-      realm.write(() => {
+      realm?.write(() => {
         realm.delete(data);
       });
     } catch (error) {
@@ -53,6 +68,10 @@ export function deleteMusic(data) {
   });
 }
 
+/**
+ * 删除所有数据
+ * @param type
+ */
 export function deleteAll(type) {
   try {
     realm?.write(() => {
@@ -64,7 +83,13 @@ export function deleteAll(type) {
   }
 }
 
-export function queryMusic(type, query) {
+/**
+ * 查询数据
+ * @param type
+ * @param query
+ * @returns {Realm.Results<Realm.Object>}
+ */
+export function queryRealm(type, query) {
   if (query) {
     return realm.objects(type).filtered(query);
   }

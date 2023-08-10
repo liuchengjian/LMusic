@@ -71,3 +71,15 @@ export const topicDetail = (params) => {
     }),
   );
 };
+
+
+export const songUrl = (params) => {
+  return Service(
+    setConfig({
+      url: '/song/url',
+      method: 'get',
+      params: params,
+      notCheckToken: true
+    }),
+  );
+};
